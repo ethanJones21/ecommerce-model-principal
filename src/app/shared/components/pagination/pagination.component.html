@@ -1,0 +1,33 @@
+<div class="card-footer pointer">
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+      <li class="page-item">
+        <a
+          [class.disabled]="pagination.previous == null"
+          class="page-link"
+          (click)="previous()"
+          >Prev</a
+        >
+      </li>
+      <li class="page-item d-sm-none">
+        <span class="page-link page-link-static">2 / 5</span>
+      </li>
+
+      <ng-container *ngFor="let page of pagination.pages">
+        <li class="page-item d-none d-sm-block">
+          <a #pageModel class="page-link" (click)="changePage(page)">{{
+            page
+          }}</a>
+        </li>
+      </ng-container>
+      <li class="page-item">
+        <a
+          [class.disabled]="pagination.next == null"
+          class="page-link"
+          (click)="next()"
+          >Next</a
+        >
+      </li>
+    </ul>
+  </nav>
+</div>
