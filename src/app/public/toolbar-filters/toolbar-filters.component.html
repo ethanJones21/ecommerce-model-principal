@@ -1,0 +1,66 @@
+<div class="d-flex align-items-center pt-md-4">
+  <div class="form-inline flex-nowrap mr-3 mr-xl-5">
+    <label
+      for="sorting-top"
+      class="font-weight-bold text-nowrap mr-2 pr-1 d-none d-lg-block"
+      >Sort by</label
+    >
+    <select
+      id="sorting-top"
+      class="custom-select"
+      #selectSort
+      (change)="setSort(selectSort.value)"
+    >
+      <option value="">Select a sort</option>
+      <ng-container *ngFor="let sort of sorts">
+        <option [value]="sort">{{ sort }}</option>
+      </ng-container>
+    </select>
+  </div>
+  <div class="form-inline flex-nowrap d-none d-sm-flex mr-3 mr-xl-5">
+    <label
+      for="pager-top"
+      class="font-weight-bold text-nowrap mr-2 pr-1 d-none d-lg-block"
+      >Show</label
+    >
+    <select
+      id="pager-top"
+      class="custom-select"
+      #selectLimit
+      (change)="setLimit(selectLimit.value)"
+    >
+      <option value="">Select a Value</option>
+      <ng-container *ngFor="let limit of limits">
+        <option [value]="limit">{{ limit }}</option>
+      </ng-container>
+    </select>
+    <span class="font-size-sm text-muted text-nowrap ml-2 d-none d-lg-block"
+      >products per page</span
+    >
+  </div>
+  <nav class="ml-auto" aria-label="Pagination">
+    <ul class="pagination mb-0">
+      <li class="page-item d-sm-none">
+        <span class="page-link page-link-static">1 / 5</span>
+      </li>
+
+      <ng-container *ngFor="let page of pagination.pages">
+        <li class="page-item d-none d-sm-block">
+          <a class="page-link pointer" (click)="setPage(page)">
+            {{ page }}
+          </a>
+        </li>
+      </ng-container>
+
+      <li class="page-item">
+        <a
+          class="page-link pointer"
+          [class.disabled]="pagination.next == null"
+          (click)="setPage(pagination.next)"
+        >
+          <i class="cxi-arrow-right"></i>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>

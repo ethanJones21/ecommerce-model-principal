@@ -6,10 +6,9 @@ import { AppComponent } from './app.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { AuthInterceptorService } from './core/interceptors/auth.interceptor.service';
-import { PerfilComponent } from './private/perfil/perfil.component';
 
 @NgModule({
-  declarations: [AppComponent, PerfilComponent],
+  declarations: [AppComponent],
   imports: [BrowserModule, AppRoutingModule, RouterModule, HttpClientModule],
   providers: [
     {

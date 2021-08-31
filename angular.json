@@ -23,6 +23,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": ["lodash"],
             "outputPath": "dist/ecommerce-model-principal",
             "index": "src/index.html",
             "main": "src/main.ts",
