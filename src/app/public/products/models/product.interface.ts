@@ -20,7 +20,7 @@ export interface ProductItf {
   content: string;
   stock: number;
   varieties: varietiesItf[];
-  category: number;
+  category: string;
   nsales?: number;
   galery?: gal[];
   state?: string;

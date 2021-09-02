@@ -12,7 +12,7 @@ const routes: Routes = [
     path: '',
     loadChildren: () =>
       import('./public/public.module').then((m) => m.PublicModule),
-    canLoad: [AuthGuard],
+    // canLoad: [AuthGuard],
   },
   {
     path: '404',

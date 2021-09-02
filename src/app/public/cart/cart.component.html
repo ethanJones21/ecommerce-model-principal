@@ -1,0 +1,97 @@
+<div class="modal-right shadow-sm">
+  <ng-container *ngIf="cart">
+    <div class="d-flex justify-content-around align-items-center border-bottom">
+      <h2 class="h5 mb-0">Productos en carrito ({{ cart.products.length }})</h2>
+      <button
+        class="close mr-n1"
+        type="button"
+        data-dismiss="offcanvas"
+        aria-label="Close"
+      >
+        <span class="h3 font-weight-normal mb-0" aria-hidden="true">×</span>
+      </button>
+    </div>
+
+    <div class="cs-offcanvas-body scroll-body">
+      <ng-container *ngFor="let p of cart.products; let i = index">
+        <div class="media p-4 border-bottom mx-n4">
+          <a href="shop-single.html" style="min-width: 80px">
+            <img
+              src="../../assets/img/ecommerce/cart/01.png"
+              width="80"
+              alt="Product thumb"
+            />
+          </a>
+          <div class="media-body pl-3">
+            <div class="d-flex justify-content-between">
+              <div class="pr-2">
+                <h3 class="font-size-sm mb-3">
+                  <a
+                    href="shop-single.html"
+                    class="nav-link font-weight-bold"
+                    >{{ p.product.name }}</a
+                  >
+                </h3>
+                <ul class="list-unstyled font-size-xs mt-n2 mb-2">
+                  <!-- <ng-container *ngFor="let variety of p.varieties">
+                      <li class="mb-0">
+                        <span class="text-muted">Color:</span> Pink
+                      </li>
+                    </ng-container> -->
+                  <!-- <li class="mb-0">
+                      <span class="text-muted">Color:</span> Pink
+                    </li>
+                    <li class="mb-0"><span class="text-muted">Size:</span> S</li> -->
+                </ul>
+                <div class="d-flex align-items-center">
+                  <input
+                    type="number"
+                    class="form-control form-control-sm bg-light mr-3"
+                    style="width: 4.5rem"
+                    #amountInput
+                    [value]="amounts[i]"
+                    (change)="
+                      changeAmount(amountInput.value, p.product.price, i)
+                    "
+                  />
+                  <!-- [value]="p.amount" -->
+                  <div class="text-nowrap">
+                    <strong class="text-danger">${{ substotal[i] }}</strong>
+                    <!-- <s class="font-size-xs text-muted">$31.00</s> -->
+                  </div>
+                </div>
+                <button
+                  class="btn btn-link btn-sm text-decoration-none px-0 pb-0"
+                >
+                  Move to
+                  <i class="cxi-heart ml-1"></i>
+                </button>
+              </div>
+              <div class="nav-muted mr-n2">
+                <a
+                  (click)="deleteProductOfCart(p.product._id)"
+                  class="nav-link px-2 mt-n2 pointer"
+                  data-toggle="tooltip"
+                  title=""
+                  data-original-title="Remove"
+                  ><i class="cxi-delete"></i
+                ></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="d-flex flex-column border-top">
+      <div class="d-flex align-items-center justify-content-between mb-3 pb-1">
+        <span class="text-muted mr-2">Subtotal:</span>
+        <span class="h5 mb-0">${{ calculateTotal() }}</span>
+      </div>
+      <a href="checkout.html" class="btn btn-primary btn-lg btn-block">
+        <i class="cxi-credit-card font-size-lg mt-n1 mr-1"></i>
+        Checkout
+      </a>
+    </div>
+  </ng-container>
+</div>

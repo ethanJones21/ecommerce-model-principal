@@ -15,6 +15,9 @@ import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 import { ToolbarFiltersComponent } from './toolbar-filters/toolbar-filters.component';
 import { SidebarCategoriesComponent } from './sidebar-categories/sidebar-categories.component';
 import { PrivateModule } from '../private/private.module';
+import { RecommendedProductsComponent } from './products/recommended-products/recommended-products.component';
+import { ReviewsComponent } from './products/product/reviews/reviews.component';
+import { CartComponent } from './cart/cart.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +31,9 @@ import { PrivateModule } from '../private/private.module';
     BreadcrumbComponent,
     ToolbarFiltersComponent,
     SidebarCategoriesComponent,
+    RecommendedProductsComponent,
+    ReviewsComponent,
+    CartComponent,
   ],
   imports: [
     CommonModule,
@@ -49,6 +55,9 @@ import { PrivateModule } from '../private/private.module';
     BreadcrumbComponent,
     ToolbarFiltersComponent,
     SidebarCategoriesComponent,
+    RecommendedProductsComponent,
+    ReviewsComponent,
+    CartComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

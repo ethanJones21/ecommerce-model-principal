@@ -42,8 +42,8 @@
           <li class="divider-vertical mb-0 d-lg-block d-none"></li>
           <li class="nav-item align-self-center mb-0">
             <a
-              href="#"
-              class="nav-tool pr-lg-0"
+              (click)="viewCart = !viewCart"
+              class="nav-tool pr-lg-0 pointer"
               data-toggle="offcanvas"
               data-target="cart"
             >
@@ -243,3 +243,5 @@
     </div>
   </div>
 </header>
+
+<Cart *ngIf="viewCart"></Cart>
