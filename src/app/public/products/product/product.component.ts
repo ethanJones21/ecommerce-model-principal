@@ -23,6 +23,8 @@ export class ProductComponent implements OnInit, OnDestroy {
   colors: string[] = [];
   sizes: string[] = [];
 
+  addedToCart = false;
+
   constructor(
     private productServ: ProductService,
     private route: ActivatedRoute,
@@ -107,6 +109,7 @@ export class ProductComponent implements OnInit, OnDestroy {
         this.colors = this.getUnits(product, 'color');
         this.sizes = this.getUnits(product, 'size');
         this.product = product;
+        this.btnDisabled();
       })
     );
   }
@@ -119,6 +122,10 @@ export class ProductComponent implements OnInit, OnDestroy {
     const indice =
       product.varieties?.findIndex((variety) => variety.title === title) || 0;
     return product.varieties[indice].units;
+  }
+
+  btnDisabled() {
+    if (this.cartServ.pIDs.includes(this.product.id)) this.addedToCart = true;
   }
 
   addProductToCart(product: ProductItf) {

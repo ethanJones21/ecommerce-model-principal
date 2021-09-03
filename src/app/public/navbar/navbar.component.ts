@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CartService } from '../../shared/services/cart.service';
 
 @Component({
   selector: 'Navbar',
@@ -6,8 +7,17 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit {
+  countProducts = 0;
   viewCart = false;
-  constructor() {}
+  constructor(private cartServ: CartService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.cartServ
+      .getProductsLength()
+      .subscribe((count) => (this.countProducts = count));
+  }
+
+  closeModal(close: boolean) {
+    this.viewCart = close;
+  }
 }

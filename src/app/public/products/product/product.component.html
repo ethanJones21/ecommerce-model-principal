@@ -166,11 +166,20 @@
         </div>
         <div class="col-lg-6 order-lg-4 order-4">
           <button
+            *ngIf="!addedToCart"
             (click)="addProductToCart(product)"
             class="btn btn-block btn-primary"
           >
             <i class="cxi-cart mr-2"></i>
-            Add to cart
+            Agregar al carrito
+          </button>
+          <button
+            *ngIf="addedToCart"
+            disabled
+            class="btn btn-block btn-success"
+          >
+            <i class="cxi-cart mr-2"></i>
+            Agregado al carrito
           </button>
         </div>
         <div class="col-lg-4 col-8 order-lg-5 order-2">

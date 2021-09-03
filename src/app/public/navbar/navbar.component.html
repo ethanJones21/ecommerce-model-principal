@@ -58,7 +58,7 @@
                   py-1
                   font-size-xs
                 "
-                >4</span
+                >{{ countProducts }}</span
               >
             </a>
           </li>
@@ -244,4 +244,4 @@
   </div>
 </header>
 
-<Cart *ngIf="viewCart"></Cart>
+<Cart *ngIf="viewCart" (close)="closeModal($event)"></Cart>

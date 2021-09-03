@@ -3,6 +3,7 @@
     <div class="d-flex justify-content-around align-items-center border-bottom">
       <h2 class="h5 mb-0">Productos en carrito ({{ cart.products.length }})</h2>
       <button
+        (click)="closeModal()"
         class="close mr-n1"
         type="button"
         data-dismiss="offcanvas"
@@ -88,7 +89,7 @@
         <span class="text-muted mr-2">Subtotal:</span>
         <span class="h5 mb-0">${{ calculateTotal() }}</span>
       </div>
-      <a href="checkout.html" class="btn btn-primary btn-lg btn-block">
+      <a [routerLink]="['/checkout']" class="btn btn-primary btn-lg btn-block">
         <i class="cxi-credit-card font-size-lg mt-n1 mr-1"></i>
         Checkout
       </a>
