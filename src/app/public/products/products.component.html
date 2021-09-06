@@ -89,7 +89,9 @@
               <div class="card-footer">
                 <div class="d-flex align-items-center mb-2 pb-1">
                   <div class="mt-n2">
-                    <ng-container *ngFor="let size of sizes; let i = index">
+                    <ng-container
+                      *ngFor="let otherV of otherVariety; let i = index"
+                    >
                       <div
                         class="
                           custom-control
@@ -100,43 +102,44 @@
                         <input
                           type="radio"
                           class="custom-control-input"
-                          name="size"
-                          id="l-{{ i }}"
+                          id="v-{{ i }}"
                         />
-                        <label for="l-{{ i }}" class="cs-custom-option-label">{{
-                          size
+                        <label for="v-{{ i }}" class="cs-custom-option-label">{{
+                          otherV
                         }}</label>
                       </div>
                     </ng-container>
                   </div>
-                  <div class="ml-auto">
-                    <ng-container *ngFor="let color of colors; let i = index">
-                      <div
-                        class="
-                          custom-control
-                          cs-custom-color-option cs-custom-color-option-sm
-                          custom-control-inline
-                        "
-                      >
-                        <input
-                          type="radio"
-                          class="custom-control-input"
-                          name="color"
-                          id="color-{{ i }}"
-                          [value]="color"
-                        />
-                        <label
-                          for="color-{{ i }}"
-                          class="cs-custom-option-label"
+                  <ng-container *ngIf="colors">
+                    <div class="ml-auto">
+                      <ng-container *ngFor="let color of colors; let i = index">
+                        <div
+                          class="
+                            custom-control
+                            cs-custom-color-option cs-custom-color-option-sm
+                            custom-control-inline
+                          "
                         >
-                          <span
-                            class="cs-color-swatch"
-                            [ngStyle]="{ 'background-color': color }"
-                          ></span>
-                        </label>
-                      </div>
-                    </ng-container>
-                  </div>
+                          <input
+                            type="radio"
+                            class="custom-control-input"
+                            name="color"
+                            id="color-{{ i }}"
+                            [value]="color"
+                          />
+                          <label
+                            for="color-{{ i }}"
+                            class="cs-custom-option-label"
+                          >
+                            <span
+                              class="cs-color-swatch"
+                              [ngStyle]="{ 'background-color': color }"
+                            ></span>
+                          </label>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </ng-container>
                 </div>
                 <button type="button" class="btn btn-primary btn-block">
                   <i class="cxi-cart align-middle mt-n1 mr-2"></i>

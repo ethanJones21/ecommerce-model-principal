@@ -10,7 +10,7 @@
   "
 >
   <h1 class="mb-2 mb-md-0">{{ product.name }}</h1>
-  <span class="text-muted"><strong>Art. No.</strong> 183260098</span>
+  <span class="text-muted"><strong>Art. No.</strong> {{ product.id }}</span>
 </section>
 
 <!-- Single product -->
@@ -47,18 +47,6 @@
               <img [src]="getImg(foto.name)" [alt]="foto" />
             </button>
           </ng-container>
-          <!-- <button type="button" data-nav="0">
-            <img
-              src="https://createx.createx.studio/assets/img/ecommerce/shop/single/01.jpg"
-              alt="Thumbnail"
-            />
-          </button> -->
-          <!-- <button type="button" data-nav="4" class="video-indicator">
-            <img
-              src="https://createx.createx.studio/assets/img/ecommerce/shop/single/05.jpg"
-              alt="Thumbnail"
-            />
-          </button> -->
         </div>
       </div>
     </div>
@@ -90,49 +78,61 @@
       </div>
 
       <!-- Ordering form -->
-      <form class="row">
-        <div class="col-12">
-          <div class="form-group">
-            <label for="pink">Color</label>
-            <div class="d-flex align-items-middle">
-              <ng-container *ngFor="let color of colors; let i = index">
-                <div
-                  class="
-                    custom-control
-                    cs-custom-color-option cs-custom-color-option-sm
-                    custom-control-inline
-                    mr-2
-                    mb-2
-                  "
+      <form [formGroup]="productForm" class="row">
+        <ng-container *ngIf="colors && colors.length > 0">
+          <div class="col-12">
+            <div class="form-group">
+              <label for="pink">Color</label>
+              <div class="d-flex align-items-middle">
+                <ng-container *ngFor="let color of colors; let i = index">
+                  <div
+                    class="
+                      custom-control
+                      cs-custom-color-option cs-custom-color-option-sm
+                      custom-control-inline
+                      mr-2
+                      mb-2
+                    "
+                  >
+                    <input
+                      class="custom-control-input"
+                      type="radio"
+                      id="color-${{ i }}"
+                      data-label="colorOptionText"
+                      name="colorSelected"
+                      [value]="color"
+                      [defaultChecked]="colors[0]"
+                      formControlName="colorSelected"
+                    />
+                    <label class="cs-custom-option-label" for="color-${{ i }}">
+                      <span
+                        class="cs-color-swatch"
+                        [ngStyle]="{ 'background-color': color }"
+                      ></span>
+                    </label>
+                  </div>
+                </ng-container>
+                <span
+                  class="d-inline-block pl-2 text-muted"
+                  id="colorOptionText"
+                  >{{ valueCC.colorSelected }}</span
                 >
-                  <input
-                    class="custom-control-input"
-                    type="radio"
-                    name="color"
-                    id="color-${{ i }}"
-                    data-label="colorOptionText"
-                  />
-                  <label class="cs-custom-option-label" for="color-${{ i }}">
-                    <span
-                      class="cs-color-swatch"
-                      [ngStyle]="{ 'background-color': color }"
-                    ></span>
-                  </label>
-                </div>
-              </ng-container>
-              <span class="d-inline-block pl-2 text-muted" id="colorOptionText"
-                >Pink</span
-              >
+              </div>
             </div>
           </div>
-        </div>
+        </ng-container>
         <div class="col-sm-8 order-sm-1 order-2">
           <div class="form-group">
-            <label for="size">Size</label>
-            <select class="form-control custom-select" id="size">
-              <option>Please select</option>
-              <ng-container *ngFor="let size of sizes">
-                <option>Talla {{ size }}</option>
+            <label for="size">{{ titleOtherVariety }}</label>
+            <select
+              name="otherVarietySelected"
+              formControlName="otherVarietySelected"
+              class="form-control custom-select"
+              id="size"
+            >
+              <option value="">Please select</option>
+              <ng-container *ngFor="let otherV of otherVariety">
+                <option [value]="otherV">{{ otherV }}</option>
               </ng-container>
             </select>
           </div>
@@ -156,7 +156,12 @@
         </div>
         <div class="col-lg-2 col-4 order-lg-3 order-3">
           <div class="form-group">
-            <select class="form-control custom-select" id="select-input">
+            <select
+              name="amountSelected"
+              formControlName="amountSelected"
+              class="form-control custom-select"
+              id="select-input"
+            >
               <option>1</option>
               <option>2</option>
               <option>5</option>
@@ -167,7 +172,7 @@
         <div class="col-lg-6 order-lg-4 order-4">
           <button
             *ngIf="!addedToCart"
-            (click)="addProductToCart(product)"
+            (click)="addProductToCart(productForm, product)"
             class="btn btn-block btn-primary"
           >
             <i class="cxi-cart mr-2"></i>
@@ -569,11 +574,8 @@
                 </div>
               </div>
             </div>
-            <button
-              type="button"
-              class="btn btn-primary btn-block"
-              (click)="addProductToCart(product)"
-            >
+            <button type="button" class="btn btn-primary btn-block">
+              <!-- (click)="addProductToCart( product)" -->
               <i class="cxi-cart align-middle mt-n1 mr-2"></i>
               Add to cart
             </button>

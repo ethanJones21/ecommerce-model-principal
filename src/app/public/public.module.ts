@@ -18,6 +18,7 @@ import { PrivateModule } from '../private/private.module';
 import { RecommendedProductsComponent } from './products/recommended-products/recommended-products.component';
 import { ReviewsComponent } from './products/product/reviews/reviews.component';
 import { CartComponent } from './cart/cart.component';
+import { AddressComponent } from './address/address.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { CartComponent } from './cart/cart.component';
     RecommendedProductsComponent,
     ReviewsComponent,
     CartComponent,
+    AddressComponent,
   ],
   imports: [
     CommonModule,
@@ -58,6 +60,7 @@ import { CartComponent } from './cart/cart.component';
     RecommendedProductsComponent,
     ReviewsComponent,
     CartComponent,
+    AddressComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

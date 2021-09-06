@@ -19,7 +19,8 @@ export class ProductsComponent implements OnInit {
   };
   page = 1;
   colors: string[] = [];
-  sizes: string[] = [];
+  otherVariety: string[] = [];
+  titleOtherVariety = '';
 
   products$!: Observable<ProductItf[]>;
   filteredProducts$ = this.filtersServ.filteredProducts.asObservable();
@@ -48,7 +49,7 @@ export class ProductsComponent implements OnInit {
           this.pagination.next = next?.page || null;
           products.forEach((product) => {
             this.colors = this.getUnits(product, 'color');
-            this.sizes = this.getUnits(product, 'size');
+            this.otherVariety = this.getUnits(product, 'size');
           });
           this.filtersServ.setData(products);
           return products;
@@ -62,8 +63,16 @@ export class ProductsComponent implements OnInit {
   }
 
   getUnits(product: ProductItf, title: string) {
-    const indice =
-      product.varieties?.findIndex((variety) => variety.title === title) || 0;
+    let indice = 0;
+    if (title === 'color') {
+      indice =
+        product.varieties?.findIndex((variety) => variety.title === title) || 0;
+    } else {
+      indice =
+        product.varieties?.findIndex((variety) => variety.title !== 'color') ||
+        0;
+      this.titleOtherVariety = product.varieties[indice].title;
+    }
     return product.varieties[indice].units;
   }
 

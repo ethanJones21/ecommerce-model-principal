@@ -7,29 +7,47 @@ import { CartService } from 'src/app/shared/services/cart.service';
 import { environment } from '../../../../environments/environment';
 const apiUrl = environment.apiUrl;
 import { io } from 'socket.io-client';
+import { AlertsService } from '../../../shared/services/alerts.service';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { formValueControlsProduct } from './helpers/form-value-controls-product.class';
+import { formValidControlsProduct } from './helpers/form-valid-controls-product.class';
+import { formErrorsControlsProduct } from './helpers/form-errors-controls-product.class';
 declare const tns: any;
 declare const lightGallery: any;
 @Component({
-  selector: 'app-product',
+  selector: 'Product',
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.scss'],
 })
 export class ProductComponent implements OnInit, OnDestroy {
   socket = io(apiUrl);
+
+  valueCC!: formValueControlsProduct;
+  validCC!: formValidControlsProduct;
+  errorsCC!: formErrorsControlsProduct;
+
   product!: ProductItf;
+  amount = 1;
   // product$!: Observable<any>;
   slug = '';
   subs = new Subscription();
   colors: string[] = [];
-  sizes: string[] = [];
+  otherVariety: string[] = [];
+  titleOtherVariety = '';
 
   addedToCart = false;
 
+  productForm!: FormGroup;
+
   constructor(
+    private fb: FormBuilder,
     private productServ: ProductService,
     private route: ActivatedRoute,
-    private cartServ: CartService
-  ) {}
+    private cartServ: CartService,
+    private alertsServ: AlertsService
+  ) {
+    this.initForm();
+  }
 
   ngOnInit(): void {
     this.initProduct();
@@ -37,6 +55,21 @@ export class ProductComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
+  }
+
+  initForm() {
+    this.productForm = this.fb.group({
+      colorSelected: [''],
+      otherVarietySelected: ['', Validators.required],
+      amountSelected: [1, Validators.required],
+    });
+    this.initControls();
+  }
+
+  private initControls() {
+    this.valueCC = new formValueControlsProduct(this.productForm);
+    this.validCC = new formValidControlsProduct(this.productForm);
+    this.errorsCC = new formErrorsControlsProduct(this.productForm);
   }
 
   initProduct() {
@@ -59,14 +92,17 @@ export class ProductComponent implements OnInit, OnDestroy {
         },
       ],
     };
-    this.route.params.subscribe(({ slug }) => {
-      this.slug = slug;
-      this.getProduct();
-      setTimeout(() => {
-        this.initSliderProduct();
-        this.initLightGallery();
-      }, 500);
-    });
+    this.route.params.subscribe(
+      ({ slug }) => {
+        this.slug = slug;
+        this.getProduct();
+        setTimeout(() => {
+          this.initSliderProduct();
+          this.initLightGallery();
+        }, 500);
+      },
+      (err) => this.alertsServ.showError(err, 'No se pudo obtener el producto')
+    );
   }
 
   initSliderProduct() {
@@ -105,12 +141,16 @@ export class ProductComponent implements OnInit, OnDestroy {
 
   getProduct() {
     this.subs.add(
-      this.productServ.getProduct(this.slug).subscribe((product) => {
-        this.colors = this.getUnits(product, 'color');
-        this.sizes = this.getUnits(product, 'size');
-        this.product = product;
-        this.btnDisabled();
-      })
+      this.productServ.getProduct(this.slug).subscribe(
+        (product) => {
+          this.colors = this.getUnits(product, 'color');
+          this.otherVariety = this.getUnits(product, 'other');
+          this.product = product;
+          this.btnDisabled();
+        },
+        (err) =>
+          this.alertsServ.showError(err, 'No se pudo obtener el producto')
+      )
     );
   }
 
@@ -119,8 +159,16 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   getUnits(product: ProductItf, title: string) {
-    const indice =
-      product.varieties?.findIndex((variety) => variety.title === title) || 0;
+    let indice = 0;
+    if (title === 'color') {
+      indice =
+        product.varieties?.findIndex((variety) => variety.title === title) || 0;
+    } else {
+      indice =
+        product.varieties?.findIndex((variety) => variety.title !== 'color') ||
+        0;
+      this.titleOtherVariety = product.varieties[indice].title;
+    }
     return product.varieties[indice].units;
   }
 
@@ -128,14 +176,37 @@ export class ProductComponent implements OnInit, OnDestroy {
     if (this.cartServ.pIDs.includes(this.product.id)) this.addedToCart = true;
   }
 
-  addProductToCart(product: ProductItf) {
-    const varieties = [{}];
-    const amount = 1;
-    this.cartServ
-      .addProductToCart(product, varieties, amount)
-      .subscribe(({ ok, msg, cart }) => {
-        this.cartServ.cartID = cart.id;
-        this.socket.emit('addProductToCart', cart);
+  addProductToCart(form: FormGroup, product: ProductItf) {
+    if (form.invalid) {
+      return Object.values(form.controls).forEach((control: any) => {
+        if (control instanceof FormGroup) {
+          Object.values(control.controls).forEach((control) => {
+            control.markAsTouched();
+            this.productServ.reset(form);
+          });
+        } else {
+          control.markAsTouched();
+          this.productServ.reset(form);
+        }
       });
+    } else {
+      const v: any = {};
+      const varieties: any[] = [];
+      v[this.titleOtherVariety] = this.valueCC.otherVarietySelected;
+      if (this.colors.length > 0) v.color = this.valueCC.colorSelected;
+      varieties.push(v);
+      this.cartServ
+        .addProductToCart(product, varieties, this.valueCC.amountSelected)
+        .subscribe(
+          ({ ok, msg, cart }) => {
+            this.alertsServ.showSuccess(msg, 'Carrito');
+            this.cartServ.cartID = cart.id;
+            this.addedToCart = true;
+            this.cartServ.saveCartID(cart.id);
+            this.socket.emit('addProductToCart', cart);
+          },
+          (err) => this.alertsServ.showError(err, 'Carrito')
+        );
+    }
   }
 }

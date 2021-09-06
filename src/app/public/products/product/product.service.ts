@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
+import { FormGroup } from '@angular/forms';
 const apiUrl = environment.apiUrl;
 
 @Injectable({
@@ -19,5 +20,13 @@ export class ProductService {
 
   getImg(img: string) {
     return `${apiUrl}/uploads/products/${img}`;
+  }
+
+  reset(form: FormGroup) {
+    form.reset({
+      colorSelected: '',
+      otherVarietySelected: '',
+      amountSelected: 1,
+    });
   }
 }

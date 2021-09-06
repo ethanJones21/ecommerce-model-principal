@@ -17,28 +17,39 @@ export class CartService {
     i: number;
   }>();
 
-  cartID = '';
-  constructor(private http: HttpClient) {}
+  cartID = '123';
+  constructor(private http: HttpClient) {
+    this.initCartID();
+  }
 
-  getProductsLength() {
-    return this.http.get<any>(`${apiUrl}/cart`).pipe(
+  private initCartID() {
+    const cid = localStorage.getItem('cartID');
+    if (cid) this.cartID = cid;
+  }
+
+  getProductsLength(cartID: string) {
+    return this.http.get<any>(`${apiUrl}/cart/${cartID}`).pipe(
       map(({ ok, cart }) => {
-        cart[0].products.forEach((p: any) => {
+        cart.products.forEach((p: any) => {
           this.pIDs.push(p.product._id);
         });
-        return cart[0].products.length;
+        return cart.products.length;
       })
     );
   }
 
-  getCart() {
+  getCart(cartID: string) {
     return this.http
-      .get<any>(`${apiUrl}/cart`)
-      .pipe(map(({ ok, cart }) => cart[0]));
+      .get<any>(`${apiUrl}/cart/${cartID}`)
+      .pipe(map(({ ok, cart }) => cart));
   }
 
   deleteProductOfCart(cartId: string, productId: string) {
     return this.http.delete(`${apiUrl}/cart/${cartId}/${productId}`);
+  }
+
+  saveCartID(cartID: string) {
+    localStorage.setItem('cartID', cartID);
   }
 
   addProductToCart(product: ProductItf, varieties: any[], amount: number) {
@@ -49,7 +60,10 @@ export class CartService {
       varieties,
       subtotal: product.price * amount,
     });
-    return this.http.put<any>(`${apiUrl}/cart/${product.id}`, addProduct);
+    return this.http.put<any>(
+      `${apiUrl}/cart/${this.cartID}/${product.id}`,
+      addProduct
+    );
   }
 
   changeAmount(amount: number, subtotal: number, i: number) {

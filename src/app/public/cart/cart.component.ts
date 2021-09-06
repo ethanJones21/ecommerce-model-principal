@@ -34,20 +34,22 @@ export class CartComponent implements OnInit {
   }
 
   getCart() {
-    this.cartServ.getCart().subscribe((cart) => {
-      this.cart = cart;
-      this.cart.products.forEach((p: any, i: number) => {
-        const am: any = JSON.parse(localStorage.getItem('amounts') || '[]');
-        if (am && am.length > 0) {
-          this.amounts = am;
-          this.substotal[i] = p.product.price * this.amounts[i];
-        } else {
-          this.amounts[i] = p.amount;
-          this.substotal[i] = p.product.price * p.amount;
-        }
-        this.calculateTotal();
+    if (this.cartServ.cartID != '123') {
+      this.cartServ.getCart(this.cartServ.cartID).subscribe((cart) => {
+        this.cart = cart;
+        this.cart.products.forEach((p: any, i: number) => {
+          const am: any = JSON.parse(localStorage.getItem('amounts') || '[]');
+          if (am && am.length > 0) {
+            this.amounts = am;
+            this.substotal[i] = p.product.price * this.amounts[i];
+          } else {
+            this.amounts[i] = p.amount;
+            this.substotal[i] = p.product.price * p.amount;
+          }
+          this.calculateTotal();
+        });
       });
-    });
+    }
   }
 
   closeModal() {
