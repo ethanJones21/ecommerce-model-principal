@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
 import { NopagefoundComponent } from './nopagefound/nopagefound.component';
+import { ProfileComponent } from './private/profile/profile.component';
 
 const routes: Routes = [
   {
@@ -13,6 +14,10 @@ const routes: Routes = [
     loadChildren: () =>
       import('./public/public.module').then((m) => m.PublicModule),
     // canLoad: [AuthGuard],
+  },
+  {
+    path: 'profile',
+    component: ProfileComponent,
   },
   {
     path: '404',

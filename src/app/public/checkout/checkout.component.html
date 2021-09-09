@@ -8,21 +8,21 @@
           class="d-flex align-items-center justify-content-between pb-2 mb-4"
         >
           <h1 class="mb-0">Verificar tu compra</h1>
-          <a href="shop-catalog.html"><strong>Seguir comprando</strong></a>
+          <a [routerLink]="['/products']"><strong>Seguir comprando</strong></a>
         </div>
 
         <!-- Alert -->
-        <div class="alert alert-info mb-4" role="alert">
+        <div *ngIf="!existUser" class="alert alert-info mb-4" role="alert">
           <div class="media align-items-center">
             <i class="cxi-profile lead mr-3"></i>
             <div class="media-body">
-              Already have an account?&nbsp;&nbsp;<a
-                href="#modal-signin"
+              Necesitas&nbsp;&nbsp;<a
+                (click)="goToRegister()"
                 class="alert-link"
                 data-toggle="modal"
                 data-view="#modal-signin-view"
-                >Sign in</a
-              >&nbsp;&nbsp;for faster checkout experience.
+                >Registrarte</a
+              >&nbsp;&nbsp;para poder continuar.
             </div>
           </div>
         </div>
@@ -31,7 +31,19 @@
 
         <!-- Order review -->
         <h2 class="h4 mb-4">1. Revisión del pedido</h2>
-        <ng-container *ngIf="cart">
+
+        <ng-container *ngIf="cart?.products.length == 0">
+          <div class="bg-secondary rounded mb-5">
+            <div class="d-flex align-items-center p-4">
+              <img src="assets/img/carrito-de-compras.png" alt="carrito" />
+              <h4 class="ml-5">
+                <i class="fas fa-sad-tear"></i> Upps! No hay productos todavia
+              </h4>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="cart?.products.length > 0">
           <div class="bg-secondary rounded mb-5">
             <ng-container *ngFor="let p of cart.products; let i = index">
               <div class="media px-2 px-sm-4 py-4 border-bottom">
@@ -88,6 +100,8 @@
                       "
                     >
                       <button
+                        type="button"
+                        (click)="deleteProductOfCart(p.product._id, i)"
                         class="btn btn-outline-primary btn-sm mr-2 mr-sm-0"
                       >
                         Delete
@@ -244,9 +258,10 @@
               type="radio"
               class="custom-control-input"
               id="courier"
-              [value]="del.title"
-              [defaultChecked]="delivery[0]"
+              [value]="del.price"
+              [checked]="delivery[0]"
             />
+            <!-- [defaultChecked]="delivery[0]" -->
             <label
               for="courier"
               class="custom-control-label d-flex align-items-center"
@@ -265,7 +280,7 @@
         <hr class="border-top-0 border-bottom pt-4 mb-4" />
 
         <!-- Payment -->
-        <h2 class="h4 pt-2 mb-4">4. Payment Method</h2>
+        <h2 class="h4 pt-2 mb-4">4. Metodos de pago</h2>
         <div class="row pb-4">
           <div class="col-lg-7">
             <div class="accordion-alt" id="payment-methods">
@@ -278,6 +293,7 @@
                     data-target="#cc-card"
                   >
                     <input
+                      (click)="isPaypal = false"
                       type="radio"
                       class="custom-control-input"
                       id="cc"
@@ -348,6 +364,7 @@
                     data-target="#paypal-card"
                   >
                     <input
+                      (click)="isPaypal = true"
                       type="radio"
                       class="custom-control-input"
                       id="paypal"
@@ -390,7 +407,9 @@
                       name="payment"
                     />
                     <label for="cash" class="custom-control-label">
-                      <strong class="d-block mr-3">Cash on delivery</strong>
+                      <strong class="d-block mr-3"
+                        >Pagar por separado al delivery</strong
+                      >
                     </label>
                   </div>
                 </div>
@@ -413,15 +432,15 @@
         <hr class="mb-4 pb-2" />
 
         <!-- Additional info -->
-        <h2 class="h4 mb-4">5. Additional Information (optional)</h2>
+        <h2 class="h4 mb-4">5. Informacion adicional (opcional)</h2>
         <div class="form-group">
-          <label for="ch-notes">Order notes</label>
+          <label for="ch-notes">Notas de pedido</label>
           <textarea
             id="ch-notes"
             class="form-control form-control-lg"
             rows="5"
-            name="notesAddressCheck"
-            formControlName="notesAddressCheck"
+            name="noteAddressCheck"
+            formControlName="noteAddressCheck"
             placeholder="Notes about your order, e.g. special noted for delivery."
           ></textarea>
         </div>
@@ -433,24 +452,26 @@
         <div class="sidebar-sticky">
           <div class="sidebar-sticky-inner">
             <div class="form-group">
-              <label for="promo-code">Apply a promo code</label>
+              <label for="promo-code">Aplicar cupon</label>
               <div class="input-group input-group-lg">
                 <input
+                  formControlName="couponCheck"
+                  name="couponCheck"
                   type="text"
                   id="promo-code"
                   class="form-control"
-                  placeholder="Enter promo code"
+                  placeholder="Ingresa tu cupon"
                 />
                 <div class="input-group-append">
                   <button type="button" class="btn btn-primary">
-                    &nbsp;&nbsp;Apply&nbsp;&nbsp;
+                    &nbsp;&nbsp;Aplicar&nbsp;&nbsp;
                   </button>
                 </div>
               </div>
             </div>
             <div class="bg-secondary rounded mb-4">
               <div class="border-bottom p-4">
-                <h2 class="h4 mb-0">Order totals</h2>
+                <h2 class="h4 mb-0">Total del pedido</h2>
               </div>
               <ul class="list-unstyled border-bottom mb-0 p-4">
                 <li class="d-flex justify-content-between mb-2">
@@ -460,16 +481,16 @@
                   >
                 </li>
                 <li class="d-flex justify-content-between mb-2">
-                  <span>Shipping costs:</span>
-                  <span>${{ igv }}</span>
+                  <span>Costos de envio:</span>
+                  <span>${{ valueCC.deliveryAddressCheck }}</span>
                 </li>
                 <li class="d-flex justify-content-between mb-2">
                   <span>Discount:</span>
                   <span>&mdash;</span>
                 </li>
                 <li class="d-flex justify-content-between">
-                  <span>Estimated sales tax:</span>
-                  <span>${{ valueCC.deliveryAddressCheck() }}</span>
+                  <span>IGV:</span>
+                  <span>${{ igv }}</span>
                 </li>
               </ul>
               <div class="d-flex justify-content-between p-4">
@@ -477,8 +498,12 @@
                 <span class="h5 mb-0">${{ calculateTotal() }}</span>
               </div>
             </div>
-            <button type="submit" class="btn btn-primary btn-lg btn-block">
-              Complete order
+            <button
+              [disabled]="!checkoutForm.valid || !existUser || isPaypal"
+              type="submit"
+              class="btn btn-primary btn-lg btn-block"
+            >
+              Completar pedido
             </button>
           </div>
         </div>

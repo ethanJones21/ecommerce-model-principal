@@ -1,10 +1,12 @@
 <div class="row" style="width: 100%; height: 100%">
   <div class="mx-auto" style="display: flex; align-items: center">
     <div class="modal-body px-md-5 px-4">
-      <h3 class="modal-title mt-4 mb-0 text-center mb-5">Sign in</h3>
-      <p class="font-size-sm text-muted text-center">
-        Sign in to your account using email and password provided during
-        registration.
+      <h3 class="modal-title mt-4 mb-0 text-center mb-5">Ingresar</h3>
+      <p class="font-size-sm text-muted text-center" style="width: 30rem">
+        Ingresa con tu cuenta y si no tienes una
+        <a [routerLink]="['/auth/register']" class="alert-link"
+          >Registrate aquí</a
+        >.
       </p>
       <form
         [formGroup]="loginForm"
@@ -13,35 +15,57 @@
         novalidate
       >
         <div class="form-group">
-          <label for="signin-email">Email</label>
+          <label for="signin-email">Correo</label>
           <input
             formControlName="emailLoginForm"
             name="emailLoginForm"
             type="email"
             class="form-control"
             id="signin-email"
-            placeholder="Your email address"
+            placeholder="Correo"
           />
+          <label
+            class="text-danger"
+            *ngIf="validCC.emailLoginForm"
+            for="signin-email"
+            style="margin-bottom: 0"
+          >
+            *{{ errorsCC.emailLoginForm }}
+          </label>
         </div>
         <div class="form-group">
-          <label for="signin-password" class="form-label">Password</label>
+          <label for="signin-password" class="form-label">Contraseña</label>
           <div class="cs-password-toggle input-group-overlay">
             <input
+              #inputPassLogin
               formControlName="passLoginForm"
               name="passLoginForm"
               type="password"
               class="form-control appended-form-control"
               id="signin-password"
-              placeholder="Your password"
+              placeholder="Contraseña"
             />
+
             <div class="input-group-append-overlay">
               <label class="btn cs-password-toggle-btn input-group-text">
-                <input type="checkbox" class="custom-control-input" />
+                <input
+                  type="checkbox"
+                  class="custom-control-input"
+                  (click)="seePass(inputPassLogin)"
+                />
                 <i class="cxi-eye cs-password-toggle-indicator"></i>
-                <span class="sr-only">Show password</span>
+                <span class="sr-only">Mostrar contraseña</span>
               </label>
             </div>
           </div>
+          <label
+            for="signin-password"
+            class="text-danger"
+            *ngIf="validCC.passLoginForm"
+            style="margin-bottom: 0"
+          >
+            *{{ errorsCC.passLoginForm }}
+          </label>
         </div>
         <div
           class="d-flex justify-content-between align-items-center form-group"
@@ -51,17 +75,23 @@
               type="checkbox"
               class="custom-control-input"
               id="remember-me"
-              checked=""
+              [checked]="rememberBool"
             />
             <label for="remember-me" class="custom-control-label"
-              >Remember me</label
+              >Recuerdame</label
             >
           </div>
           <a href="#" class="font-size-sm text-decoration-none"
-            >Forgot password?</a
+            >Olvidaste tu contraseña?</a
           >
         </div>
-        <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+        <button
+          [disabled]="!loginForm.valid"
+          type="submit"
+          class="btn btn-primary btn-block"
+        >
+          Ingresar
+        </button>
       </form>
     </div>
   </div>

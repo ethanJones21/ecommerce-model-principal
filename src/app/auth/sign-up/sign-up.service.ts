@@ -3,23 +3,15 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 import { ClientApi, ClientForm } from '../../core/models/auth.model';
-import { FormGroup } from '@angular/forms';
 const apiUrl = environment.apiUrl;
 
 @Injectable({
   providedIn: 'root',
 })
-export class SignInService {
+export class SignUpService {
   constructor(private http: HttpClient) {}
 
-  login(client: ClientForm): Observable<ClientApi> {
-    return this.http.post<ClientApi>(`${apiUrl}/auth/login`, client);
-  }
-
-  reset(form: FormGroup) {
-    form.reset({
-      emailLoginForm: '',
-      passLoginForm: '',
-    });
+  register(client: ClientForm): Observable<ClientApi> {
+    return this.http.post<ClientApi>(`${apiUrl}/auth/register`, client);
   }
 }

@@ -38,6 +38,15 @@ export class CartService {
     );
   }
 
+  saveAmountsLocalStorage(amounts: any[]) {
+    localStorage.setItem('amounts', JSON.stringify(amounts));
+  }
+
+  getAmountsLocalStorage(): number[] {
+    const a = JSON.parse(localStorage.getItem('amounts') || '[]');
+    return a || [];
+  }
+
   getCart(cartID: string) {
     return this.http
       .get<any>(`${apiUrl}/cart/${cartID}`)

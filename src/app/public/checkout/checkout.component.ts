@@ -11,6 +11,12 @@ import { Observable } from 'rxjs';
 import { formValueControlsCheckout } from './helpers/form-value-controls-checkout.class';
 import { formValidControlsCheckout } from './helpers/form-valid-controls-checkout.class';
 import { formErrorsControlsCheckout } from './helpers/form-errors-controls-checkout.class';
+import { SaleClass } from './models/sale.class';
+import { ventaItf, detailsItf } from './models/sale.interfaces';
+import { UserService } from '../../shared/services/user.service';
+import { CheckoutService } from './checkout.service';
+import { RoutesService } from '../../shared/services/routes.service';
+import { Router } from '@angular/router';
 declare let Cleave: any;
 declare let StickySidebar: any;
 declare let paypal: any;
@@ -39,17 +45,28 @@ export class CheckoutComponent implements OnInit {
   amount_subtotal$ = this.cartServ.amount_subtotal.asObservable();
   checkoutForm!: FormGroup;
   delivery: any[] = [];
+  details: detailsItf[] = [];
+
+  existUser = false;
+  isPaypal = false;
 
   @ViewChild('paypalButton', { static: true }) paypalElement!: ElementRef;
 
+  venta: ventaItf;
+
   constructor(
+    private userServ: UserService,
+    private checkServ: CheckoutService,
     private cartServ: CartService,
     private addressServ: AddressService,
     private imgServ: ImgService,
     private fb: FormBuilder,
-    private shipServ: ShippingMethodsService
+    private shipServ: ShippingMethodsService,
+    private routesServ: RoutesService,
+    private router: Router
   ) {
     this.initForm();
+    this.venta = new SaleClass(this.checkoutForm, []);
   }
 
   ngOnInit(): void {
@@ -66,6 +83,15 @@ export class CheckoutComponent implements OnInit {
     this.initPaypal();
     this.getCities();
     this.getDelivery();
+    this.beRegisteredOrLogin();
+  }
+
+  beRegisteredOrLogin() {
+    const user = this.userServ.getTokenInformation().user;
+    if (user) this.existUser = true;
+    this.valueCC.nameAddressCheck = user.name;
+    this.valueCC.emailAddressCheck = user.email;
+    this.valueCC.lastnameAddressCheck = user.lastname;
   }
 
   private initControls() {
@@ -80,30 +106,32 @@ export class CheckoutComponent implements OnInit {
       lastnameAddressCheck: ['', Validators.required],
       emailAddressCheck: ['', Validators.required],
       phoneAddressCheck: ['', Validators.required],
-      zipAddressCheck: [20000, Validators.required],
+      zipAddressCheck: [0, Validators.required],
       addressCheck: ['', Validators.required],
-      deliveryAddressCheck: ['', Validators.required],
+      deliveryAddressCheck: [5, Validators.required],
       countryAddressCheck: ['', Validators.required],
       cityAddressCheck: ['', Validators.required],
-      notesAddressCheck: [''],
+      noteAddressCheck: [''],
+      couponCheck: [''],
     });
+    this.initControls();
   }
 
-  submitForm(form: FormGroup) {
-    console.log(form);
+  submitForm(form: FormGroup, total?: number, transaction?: string) {
     if (form.invalid) {
       return Object.values(form.controls).forEach((control: any) => {
         if (control instanceof FormGroup) {
           Object.values(control.controls).forEach((control) => {
             control.markAsTouched();
-            // this.productServ.reset(form);
+            this.checkServ.reset(form);
           });
         } else {
           control.markAsTouched();
-          // this.productServ.reset(form);
+          this.checkServ.reset(form);
         }
       });
     } else {
+      this.venta = new SaleClass(form, this.details, total, transaction);
     }
   }
 
@@ -138,10 +166,10 @@ export class CheckoutComponent implements OnInit {
           return actions.order.create({
             purchase_units: [
               {
-                description: 'Nombre del pago',
+                description: 'Carrito',
                 amount: {
                   currency_code: 'USD',
-                  value: 9,
+                  value: this.calculateTotal(),
                 },
               },
             ],
@@ -149,10 +177,18 @@ export class CheckoutComponent implements OnInit {
         },
         onApprove: async (data: any, actions: any) => {
           const order = await actions.order.capture();
-          // this.valueCC.setTransaction = order.purchase_units[0].payments.capture[0].id;
+          this.submitForm(
+            this.checkoutForm,
+            this.calculateTotal(),
+            order.purchase_units[0].payments.captures[0].id
+          );
         },
-        onError: (err: any) => {},
-        onCancel: (data: any, actions: any) => {},
+        onError: (err: any) => {
+          console.log(err);
+        },
+        onCancel: (data: any, actions: any) => {
+          console.log(data);
+        },
       })
       .render(this.paypalElement.nativeElement);
   }
@@ -171,17 +207,23 @@ export class CheckoutComponent implements OnInit {
             this.substotal[i] = p.product.price * p.amount;
           }
           this.calculateSubTotal();
+          this.details.push({
+            product: p.product._id,
+            subtotal: this.substotal[i],
+            amount: this.amounts[i],
+            variety: p.varieties,
+          });
         });
       });
     }
   }
 
-  deleteProductOfCart(productID: string) {
+  deleteProductOfCart(productID: string, i: number) {
     this.cartServ
       .deleteProductOfCart(this.cartServ.cartID, productID)
       .subscribe((resp) => {
         this.socket.emit('deleteProductOfCart', productID);
-        this.saveAmountsLocalStorage();
+        this.deleteAmount(i);
       });
   }
 
@@ -189,11 +231,14 @@ export class CheckoutComponent implements OnInit {
     this.amounts[i] = Number(amount);
     this.substotal[i] = price * this.amounts[i];
     this.cartServ.changeAmount(this.amounts[i], this.substotal[i], i);
-    this.saveAmountsLocalStorage();
+    this.cartServ.saveAmountsLocalStorage(this.amounts);
   }
 
-  saveAmountsLocalStorage() {
-    localStorage.setItem('amounts', JSON.stringify(this.amounts));
+  deleteAmount(i: number) {
+    // this.amounts[i] = 0;
+    this.amounts.splice(i, 1);
+    this.substotal[i] = 0;
+    this.cartServ.saveAmountsLocalStorage(this.amounts);
   }
 
   calculateSubTotal() {
@@ -205,11 +250,19 @@ export class CheckoutComponent implements OnInit {
   }
 
   calculateTotal() {
-    // + this.valueCC.deliveryAddressCheck
-    return this.calculateSubTotal() + this.igv;
+    return (
+      this.calculateSubTotal() + this.igv + this.valueCC.deliveryAddressCheck
+    );
   }
 
   getImg(img: string) {
     return this.imgServ.getImg(img);
   }
+
+  goToRegister() {
+    this.routesServ.routerBack = '/checkout';
+    this.router.navigateByUrl('/auth/register');
+  }
 }
+
+// TODO: ver si aplico metodos de pago en ventas osea si es paypal o tarjeta ara ver estadisticas

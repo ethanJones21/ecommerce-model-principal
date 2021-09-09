@@ -46,7 +46,11 @@
       >
         <!-- Item -->
         <ng-container *ngFor="let product of products$ | async">
-          <div class="col pb-sm-2 mb-grid-gutter">
+          <form
+            [formGroup]="productsForm"
+            novalidate
+            class="col pb-sm-2 mb-grid-gutter"
+          >
             <div class="card card-product mx-auto">
               <div class="card-product-img">
                 <a
@@ -103,6 +107,9 @@
                           type="radio"
                           class="custom-control-input"
                           id="v-{{ i }}"
+                          name="otherVarietySelected"
+                          [value]="otherV"
+                          formControlName="otherVarietySelected"
                         />
                         <label for="v-{{ i }}" class="cs-custom-option-label">{{
                           otherV
@@ -121,15 +128,17 @@
                           "
                         >
                           <input
-                            type="radio"
                             class="custom-control-input"
-                            name="color"
-                            id="color-{{ i }}"
+                            type="radio"
+                            id="color-${{ i }}"
+                            data-label="colorOptionText"
+                            name="colorSelected"
                             [value]="color"
+                            formControlName="colorSelected"
                           />
                           <label
-                            for="color-{{ i }}"
                             class="cs-custom-option-label"
+                            for="color-${{ i }}"
                           >
                             <span
                               class="cs-color-swatch"
@@ -141,13 +150,26 @@
                     </div>
                   </ng-container>
                 </div>
-                <button type="button" class="btn btn-primary btn-block">
+
+                <button
+                  *ngIf="!addedToCart"
+                  (click)="addProductToCart(productsForm, product)"
+                  class="btn btn-block btn-primary"
+                >
                   <i class="cxi-cart align-middle mt-n1 mr-2"></i>
-                  Add to cart
+                  Agregar al carrito
+                </button>
+                <button
+                  *ngIf="addedToCart"
+                  disabled
+                  class="btn btn-block btn-success"
+                >
+                  <i class="cxi-cart align-middle mt-n1 mr-2"></i>
+                  Agregado al carrito
                 </button>
               </div>
             </div>
-          </div>
+          </form>
         </ng-container>
       </div>
 

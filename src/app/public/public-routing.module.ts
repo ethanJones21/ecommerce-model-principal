@@ -5,7 +5,6 @@ import { HomeComponent } from './home/home.component';
 import { ProductsComponent } from './products/products.component';
 import { ProductComponent } from './products/product/product.component';
 import { CheckoutComponent } from './checkout/checkout.component';
-import { ProfileComponent } from '../private/profile/profile.component';
 
 const routes: Routes = [
   {
@@ -28,10 +27,7 @@ const routes: Routes = [
         path: 'checkout',
         component: CheckoutComponent,
       },
-      {
-        path: 'profile',
-        component: ProfileComponent,
-      },
+
       { path: '**', redirectTo: 'home', pathMatch: 'full' },
     ],
   },

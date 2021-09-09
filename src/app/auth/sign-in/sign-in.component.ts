@@ -3,7 +3,13 @@ import { SignInService } from './sign-in.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, throwError } from 'rxjs';
+import { RoutesService } from 'src/app/shared/services/routes.service';
+import { catchError } from 'rxjs/operators';
+import { AlertsService } from '../../shared/services/alerts.service';
+import { formValueControlsSignIn } from './helpers/form-value-controls-sign-in.class';
+import { formValidControlsSignIn } from './helpers/form-valid-controls-sign-in.class';
+import { formErrorsControlsSignIn } from './helpers/form-errors-controls-sign-in.class';
 
 @Component({
   selector: 'Sign-in',
@@ -14,12 +20,19 @@ export class SignInComponent implements OnInit, OnDestroy {
   loginForm!: FormGroup;
   routeRedirect = '';
   subs = new Subscription();
+  rememberBool = true;
+
+  valueCC!: formValueControlsSignIn;
+  validCC!: formValidControlsSignIn;
+  errorsCC!: formErrorsControlsSignIn;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private authServ: AuthService,
-    private signInServ: SignInService
+    private signInServ: SignInService,
+    private routesServ: RoutesService,
+    private alertsServ: AlertsService
   ) {
     this.initForm();
   }
@@ -29,18 +42,39 @@ export class SignInComponent implements OnInit, OnDestroy {
     this.subs.unsubscribe();
   }
 
-  initForm() {
-    this.loginForm = this.fb.group({
-      emailLoginForm: ['', Validators.required],
-      passLoginForm: ['', Validators.required],
-    });
+  seePass(v: any) {
+    if (v.type == 'password') {
+      v.type = 'text';
+    } else {
+      v.type = 'password';
+    }
   }
 
-  reset() {
-    this.loginForm.reset({
-      emailLoginForm: '',
-      passLoginForm: '',
+  private initControls() {
+    this.valueCC = new formValueControlsSignIn(this.loginForm);
+    this.validCC = new formValidControlsSignIn(this.loginForm);
+    this.errorsCC = new formErrorsControlsSignIn(this.loginForm);
+  }
+
+  initForm() {
+    this.loginForm = this.fb.group({
+      emailLoginForm: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,3}$'),
+        ],
+      ],
+      passLoginForm: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern('[A-Za-z0-9_]{8,18}'),
+        ],
+      ],
     });
+    this.initControls();
   }
 
   submitForm(form: FormGroup) {
@@ -49,11 +83,11 @@ export class SignInComponent implements OnInit, OnDestroy {
         if (control instanceof FormGroup) {
           Object.values(control.controls).forEach((control) => {
             control.markAsTouched();
-            this.reset();
+            this.signInServ.reset(this.loginForm);
           });
         } else {
           control.markAsTouched();
-          this.reset();
+          this.signInServ.reset(this.loginForm);
         }
       });
     } else {
@@ -61,18 +95,37 @@ export class SignInComponent implements OnInit, OnDestroy {
         email: form.controls['emailLoginForm'].value,
         password: form.controls['passLoginForm'].value,
       };
+      this.rememberMe();
       this.subs.add(
-        this.signInServ.login(user).subscribe(({ profile, token }) => {
-          this.authServ.saveToken(token);
-          this.login();
-        })
+        this.signInServ
+          .login(user)
+          .pipe(
+            catchError((err: any) => {
+              const message = err.error.msg;
+              this.alertsServ.showError(message, 'Login');
+              return throwError(err.error.msg);
+            })
+          )
+          .subscribe(({ profile, token }) => {
+            this.authServ.saveToken(token);
+            this.login();
+          })
+      );
+    }
+  }
+
+  rememberMe() {
+    if (this.rememberBool) {
+      localStorage.setItem(
+        'email',
+        this.loginForm.controls['emailLoginForm'].value
       );
     }
   }
 
   login() {
     this.authServ.login();
-    this.router.navigate(['/panel']);
+    this.router.navigateByUrl(this.routesServ.routerBack);
     // this.routeRedirect = this.authServ.urlUsuarioIntentaAcceder;
     // console.log(this.routeRedirect);
     // this.authServ.urlUsuarioIntentaAcceder = '';

@@ -60,13 +60,20 @@ export class CartComponent implements OnInit {
     localStorage.setItem('amounts', JSON.stringify(this.amounts));
   }
 
-  deleteProductOfCart(productID: string) {
+  deleteProductOfCart(productID: string, i: number) {
     this.cartServ
       .deleteProductOfCart(this.cartServ.cartID, productID)
       .subscribe((resp) => {
         this.socket.emit('deleteProductOfCart', productID);
-        this.saveAmountsLocalStorage();
+        this.deleteAmount(i);
       });
+  }
+
+  deleteAmount(i: number) {
+    // this.amounts[i] = 0;
+    this.amounts.splice(i, 1);
+    this.substotal[i] = 0;
+    this.cartServ.saveAmountsLocalStorage(this.amounts);
   }
 
   changeAmount(amount: string, price: number, i: number) {

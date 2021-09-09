@@ -199,6 +199,7 @@ export class ProductComponent implements OnInit, OnDestroy {
         .addProductToCart(product, varieties, this.valueCC.amountSelected)
         .subscribe(
           ({ ok, msg, cart }) => {
+            this.saveAmounts();
             this.alertsServ.showSuccess(msg, 'Carrito');
             this.cartServ.cartID = cart.id;
             this.addedToCart = true;
@@ -208,5 +209,11 @@ export class ProductComponent implements OnInit, OnDestroy {
           (err) => this.alertsServ.showError(err, 'Carrito')
         );
     }
+  }
+
+  saveAmounts() {
+    const amounts: number[] = this.cartServ.getAmountsLocalStorage();
+    amounts.push(Number(this.valueCC.amountSelected));
+    this.cartServ.saveAmountsLocalStorage(amounts);
   }
 }

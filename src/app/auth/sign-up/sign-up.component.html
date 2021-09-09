@@ -1,0 +1,153 @@
+<div class="row" style="width: 100%; height: 100%">
+  <div class="mx-auto" style="display: flex; align-items: center">
+    <div class="modal-body px-md-5 px-4">
+      <h3 class="modal-title mt-4 mb-0 text-center mb-5">Registrarse</h3>
+      <p class="font-size-sm text-muted text-center" style="width: 30rem">
+        Registra tu cuenta o si ya tienes una
+        <a [routerLink]="['/auth/login']" class="alert-link">Ingresa aquí</a>.
+      </p>
+      <form
+        [formGroup]="registerForm"
+        (ngSubmit)="submitForm(registerForm)"
+        class="needs-validation"
+        novalidate
+      >
+        <div class="form-group">
+          <label for="signin-name">Nombre</label>
+          <input
+            formControlName="nameRegisterForm"
+            name="nameRegisterForm"
+            type="text"
+            class="form-control"
+            id="signin-name"
+            placeholder="Tu nombre"
+          />
+
+          <label
+            class="text-danger"
+            *ngIf="validCC.nameRegisterForm"
+            for="signin-name"
+            style="margin-bottom: 0"
+          >
+            *{{ errorsCC.nameRegisterForm }}
+          </label>
+        </div>
+        <div class="form-group">
+          <label for="signin-lastname">Apellido</label>
+          <input
+            formControlName="lastnameRegisterForm"
+            name="lastnameRegisterForm"
+            type="text"
+            class="form-control"
+            id="signin-lastname"
+            placeholder="Tu apellido"
+          />
+          <label
+            class="text-danger"
+            *ngIf="validCC.lastnameRegisterForm"
+            for="signin-lastname"
+            style="margin-bottom: 0"
+          >
+            *{{ errorsCC.lastnameRegisterForm }}
+          </label>
+        </div>
+        <div class="form-group">
+          <label for="signin-email">Correo</label>
+          <input
+            formControlName="emailRegisterForm"
+            name="emailRegisterForm"
+            type="email"
+            class="form-control"
+            id="signin-email"
+            placeholder="Correo"
+          />
+          <label
+            class="text-danger"
+            *ngIf="validCC.emailRegisterForm"
+            for="signin-email"
+            style="margin-bottom: 0"
+          >
+            *{{ errorsCC.emailRegisterForm }}
+          </label>
+        </div>
+        <div class="form-group">
+          <label for="signin-password" class="form-label">Contraseña</label>
+          <div class="cs-password-toggle input-group-overlay">
+            <input
+              #inputPassRegister
+              formControlName="passRegisterForm"
+              name="passRegisterForm"
+              type="password"
+              class="form-control appended-form-control"
+              id="signin-password"
+              placeholder="Contraseña"
+            />
+
+            <div class="input-group-append-overlay">
+              <label class="btn cs-password-toggle-btn input-group-text">
+                <input
+                  type="checkbox"
+                  class="custom-control-input"
+                  (click)="seePass(inputPassRegister)"
+                />
+                <i class="cxi-eye cs-password-toggle-indicator"></i>
+                <span class="sr-only">Mostrar contraseña</span>
+              </label>
+            </div>
+          </div>
+          <label
+            for="signin-password"
+            class="text-danger"
+            *ngIf="validCC.passRegisterForm"
+            style="margin-bottom: 0"
+          >
+            *{{ errorsCC.passRegisterForm }}
+          </label>
+        </div>
+        <div class="form-group">
+          <label for="signin-repeat-password" class="form-label"
+            >Repetir contraseña</label
+          >
+          <div class="cs-password-toggle input-group-overlay">
+            <input
+              #inputPassRepeatRegister
+              formControlName="passRepeatRegisterForm"
+              name="passRepeatRegisterForm"
+              type="password"
+              class="form-control appended-form-control"
+              id="signin-repeat-password"
+              placeholder="Repita contraseña"
+            />
+            <div class="input-group-append-overlay">
+              <label class="btn cs-password-toggle-btn input-group-text">
+                <input
+                  type="checkbox"
+                  class="custom-control-input"
+                  (click)="seePass(inputPassRepeatRegister)"
+                />
+                <i class="cxi-eye cs-password-toggle-indicator"></i>
+                <span class="sr-only">Mostrar contraseña</span>
+              </label>
+            </div>
+          </div>
+          <label
+            for="signin-repeat-password"
+            class="text-danger"
+            *ngIf="validCC.passRepeatRegisterForm && validCC.passEquals"
+            style="margin-bottom: 0"
+          >
+            *{{ errorsCC.passRepeatRegisterForm }}
+          </label>
+        </div>
+
+        <button
+          [disabled]="!registerForm.valid"
+          type="submit"
+          class="btn btn-primary btn-block"
+        >
+          Registrarse
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

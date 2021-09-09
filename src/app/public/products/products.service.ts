@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../../ecommerce-model/src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+import { FormGroup } from '@angular/forms';
 import {
   getProductsItf,
   onlyProductsInfoItf,
@@ -29,5 +30,13 @@ export class ProductsService {
 
   getImg(img: string) {
     return `${apiUrl}/uploads/products/${img}`;
+  }
+
+  reset(form: FormGroup) {
+    form.reset({
+      colorSelected: '',
+      otherVarietySelected: '',
+      amountSelected: 1,
+    });
   }
 }

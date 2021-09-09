@@ -11,11 +11,12 @@ export class UserService {
 
   constructor(private auth: AuthService) {}
 
-  getTokenInformation(): { user: {}; expirationDate: Date | null } {
+  getTokenInformation(): { user: any; expirationDate: Date | null } {
     const token = this.auth.getToken();
     const helper = new JwtHelperService();
     const user = helper.decodeToken(token);
     const expirationDate = helper.getTokenExpirationDate(token);
+    const { active, uid, iat } = user;
     return {
       user,
       expirationDate,
