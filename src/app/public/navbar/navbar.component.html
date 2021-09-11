@@ -7,7 +7,10 @@
     data-fixed-element
   >
     <div class="container px-0 px-xl-3">
-      <a href="index.html" class="navbar-brand order-lg-1 mr-0 pr-lg-3 mr-lg-4">
+      <a
+        [routerLink]="['/home']"
+        class="navbar-brand order-lg-1 mr-0 pr-lg-3 mr-lg-4"
+      >
         <img
           src="assets/img/ecommerce/logo.svg"
           alt="Createx Logo"
@@ -20,9 +23,11 @@
         style="max-width: 21rem"
       >
         <input
+          #inputSearchProduct
           class="form-control appended-form-control"
           type="text"
-          placeholder="Search for products..."
+          placeholder="Buscar producto"
+          (keyup.enter)="search(inputSearchProduct.value)"
         />
         <div class="input-group-append-overlay">
           <span class="input-group-text"
@@ -34,9 +39,14 @@
       <div class="d-flex align-items-center order-lg-3">
         <ul class="nav nav-tools flex-nowrap">
           <li class="nav-item d-lg-block d-none mb-0">
-            <a href="account-wishlist.html" class="nav-tool">
+            <a
+              data-toggle="offcanvas"
+              data-target="wishlist"
+              (click)="viewWishList = !viewWishList"
+              class="nav-tool pointer"
+            >
               <i class="cxi-heart nav-tool-icon"></i>
-              <span class="nav-tool-label">2</span>
+              <span class="nav-tool-label">{{ countWishProducts }}</span>
             </a>
           </li>
           <li class="divider-vertical mb-0 d-lg-block d-none"></li>
@@ -94,25 +104,27 @@
         <!-- Menu -->
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
-            <a href="index.html" class="nav-link active">Home</a>
+            <a
+              [routerLink]="['/home']"
+              routerLinkActive="active"
+              class="nav-link pointer"
+              >Inicio</a
+            >
           </li>
           <li class="nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"
-              >Shop</a
+              >Tienda</a
             >
             <ul class="dropdown-menu">
               <li>
-                <a href="shop-catalog.html" class="dropdown-item"
-                  >Catalog with Filters</a
+                <a [routerLink]="['/products']" class="dropdown-item"
+                  >Catalogo</a
                 >
               </li>
               <li>
-                <a href="shop-single.html" class="dropdown-item"
-                  >Single Product</a
+                <a [routerLink]="['/checkout']" class="dropdown-item"
+                  >Checkout</a
                 >
-              </li>
-              <li>
-                <a href="checkout.html" class="dropdown-item">Checkout</a>
               </li>
             </ul>
           </li>
@@ -140,79 +152,51 @@
                     </ul>
                   </div>
                   <div class="col-lg-2 col-md-3 py-2">
-                    <h4 class="font-size-sm text-uppercase pt-1 mb-2">
-                      Clothes
-                    </h4>
+                    <h4 class="font-size-sm text-uppercase pt-1 mb-2">Ropa</h4>
                     <ul class="list-unstyled">
-                      <li><a href="#" class="dropdown-item">Coats</a></li>
-                      <li><a href="#" class="dropdown-item">Jackets</a></li>
-                      <li><a href="#" class="dropdown-item">Suits</a></li>
-                      <li><a href="#" class="dropdown-item">Dresses</a></li>
-                      <li>
-                        <a href="#" class="dropdown-item"
-                          >Cardigans &amp; sweaters</a
-                        >
-                      </li>
-                      <li>
-                        <a href="#" class="dropdown-item"
-                          >Sweatshirts &amp; hoodies</a
-                        >
-                      </li>
-                      <li>
-                        <a href="#" class="dropdown-item"
-                          >T-shirts &amp; tops</a
-                        >
-                      </li>
-                      <li><a href="#" class="dropdown-item">Pants</a></li>
-                      <li><a href="#" class="dropdown-item">Jeans</a></li>
-                      <li><a href="#" class="dropdown-item">Shorts</a></li>
-                      <li><a href="#" class="dropdown-item">Skirts</a></li>
-                      <li>
-                        <a href="#" class="dropdown-item"
-                          >Lingerie &amp; nightwear</a
-                        >
-                      </li>
-                      <li><a href="#" class="dropdown-item">Sportswear</a></li>
-                    </ul>
-                  </div>
-                  <div class="col-lg-2 col-md-3 py-2">
-                    <h4 class="font-size-sm text-uppercase pt-1 mb-2">Shoes</h4>
-                    <ul class="list-unstyled">
-                      <li><a href="#" class="dropdown-item">Boots</a></li>
-                      <li><a href="#" class="dropdown-item">Flat shoes</a></li>
-                      <li><a href="#" class="dropdown-item">Heels</a></li>
-                      <li><a href="#" class="dropdown-item">Sandals</a></li>
-                      <li><a href="#" class="dropdown-item">Mules</a></li>
-                      <li><a href="#" class="dropdown-item">Sliders</a></li>
-                      <li><a href="#" class="dropdown-item">Slippers</a></li>
-                      <li><a href="#" class="dropdown-item">Sneakers</a></li>
-                      <li><a href="#" class="dropdown-item">Leather</a></li>
+                      <ng-container *ngFor="let ropa of ropas$ | async">
+                        <li>
+                          <a
+                            (click)="sendCategory(ropa)"
+                            class="dropdown-item pointer"
+                            >{{ ropa | capitalize }}</a
+                          >
+                        </li>
+                      </ng-container>
                     </ul>
                   </div>
                   <div class="col-lg-2 col-md-3 py-2">
                     <h4 class="font-size-sm text-uppercase pt-1 mb-2">
-                      Accessories
+                      Zapatos
                     </h4>
                     <ul class="list-unstyled">
-                      <li>
-                        <a href="#" class="dropdown-item"
-                          >Bags &amp; backpacks</a
-                        >
-                      </li>
-                      <li>
-                        <a href="#" class="dropdown-item">Hats &amp; scarves</a>
-                      </li>
-                      <li>
-                        <a href="#" class="dropdown-item">Hair accessories</a>
-                      </li>
-                      <li><a href="#" class="dropdown-item">Belts</a></li>
-                      <li><a href="#" class="dropdown-item">Jewellery</a></li>
-                      <li><a href="#" class="dropdown-item">Watches</a></li>
-                      <li><a href="#" class="dropdown-item">Sunglasses</a></li>
-                      <li><a href="#" class="dropdown-item">Purses</a></li>
-                      <li>
-                        <a href="#" class="dropdown-item">Socks &amp; tights</a>
-                      </li>
+                      <ng-container *ngFor="let shoe of shoes$ | async">
+                        <li>
+                          <a
+                            (click)="sendCategory(shoe)"
+                            class="dropdown-item pointer"
+                            >{{ shoe | capitalize }}</a
+                          >
+                        </li>
+                      </ng-container>
+                    </ul>
+                  </div>
+                  <div class="col-lg-2 col-md-3 py-2">
+                    <h4 class="font-size-sm text-uppercase pt-1 mb-2">
+                      Accesorios
+                    </h4>
+                    <ul class="list-unstyled">
+                      <ng-container
+                        *ngFor="let accesory of accesories$ | async"
+                      >
+                        <li>
+                          <a
+                            (click)="sendCategory(accesory)"
+                            class="dropdown-item pointer"
+                            >{{ accesory | capitalize }}</a
+                          >
+                        </li>
+                      </ng-container>
                     </ul>
                   </div>
                   <div class="col-lg-1 d-none d-lg-block py-2">
@@ -245,3 +229,4 @@
 </header>
 
 <Cart *ngIf="viewCart" (close)="closeModal($event)"></Cart>
+<Wish-list *ngIf="viewWishList" (close)="closeModal($event)"></Wish-list>

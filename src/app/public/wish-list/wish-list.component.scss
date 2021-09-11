@@ -1,0 +1,22 @@
+.modal-right {
+  width: 27rem;
+  max-height: 45rem;
+  position: absolute;
+  top: 5.61rem;
+  right: 13.2rem;
+  z-index: 2;
+  padding: 1.6rem;
+  border-radius: 0.5rem;
+  background: #fff;
+}
+
+.scroll-body {
+  overflow-y: visible;
+  max-height: 25rem;
+}
+
+.mini-img {
+  width: 5rem;
+  height: 7rem;
+  object-fit: cover;
+}

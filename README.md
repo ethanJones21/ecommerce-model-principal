@@ -25,3 +25,14 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+Como harias nima si tuvieras que interpolar y elegir un elemento
+// get newArrColors() {
+// // [0:[0,1,2],1:[0,1]]
+// const arr: any[] = [];
+// this.products.forEach((product: any) => {
+// // arr[product.id] = product.varieties[1].units;
+// arr.push(product.varieties[1].units);
+// });
+// return arr;
+// }

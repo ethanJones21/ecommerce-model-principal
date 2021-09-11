@@ -21,12 +21,4 @@ export class ProductService {
   getImg(img: string) {
     return `${apiUrl}/uploads/products/${img}`;
   }
-
-  reset(form: FormGroup) {
-    form.reset({
-      colorSelected: '',
-      otherVarietySelected: '',
-      amountSelected: 1,
-    });
-  }
 }

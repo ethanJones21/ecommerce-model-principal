@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import { SORTS } from '../../shared/models/sorts.model';
+import { SORTS } from '../../../shared/models/sorts.model';
 
 @Component({
   selector: 'Toolbar-filters',

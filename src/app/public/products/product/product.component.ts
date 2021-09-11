@@ -182,19 +182,32 @@ export class ProductComponent implements OnInit, OnDestroy {
         if (control instanceof FormGroup) {
           Object.values(control.controls).forEach((control) => {
             control.markAsTouched();
-            this.productServ.reset(form);
+            this.alertsServ.showError(
+              `elegir un(a) ${this.titleOtherVariety}`,
+              this.titleOtherVariety
+            );
           });
         } else {
           control.markAsTouched();
-          this.productServ.reset(form);
+          this.alertsServ.showError(
+            `elegir un(a) ${this.titleOtherVariety}`,
+            this.titleOtherVariety
+          );
         }
       });
     } else {
       const v: any = {};
       const varieties: any[] = [];
       v[this.titleOtherVariety] = this.valueCC.otherVarietySelected;
-      if (this.colors.length > 0) v.color = this.valueCC.colorSelected;
+      if (this.colors.length > 0) {
+        if (this.valueCC.colorSelected != '') {
+          v.color = this.valueCC.colorSelected;
+        } else {
+          return this.alertsServ.showError('elegir un color', 'Color');
+        }
+      }
       varieties.push(v);
+
       this.cartServ
         .addProductToCart(product, varieties, this.valueCC.amountSelected)
         .subscribe(

@@ -5,6 +5,7 @@ import { HomeComponent } from './home/home.component';
 import { ProductsComponent } from './products/products.component';
 import { ProductComponent } from './products/product/product.component';
 import { CheckoutComponent } from './checkout/checkout.component';
+import { SearchProductsComponent } from './products/search-products/search-products.component';
 
 const routes: Routes = [
   {
@@ -18,6 +19,10 @@ const routes: Routes = [
       {
         path: 'products',
         component: ProductsComponent,
+      },
+      {
+        path: 'search/:term',
+        component: SearchProductsComponent,
       },
       {
         path: 'products/detail/:slug',

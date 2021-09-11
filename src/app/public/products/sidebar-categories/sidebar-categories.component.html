@@ -56,7 +56,10 @@
             data-simplebar-auto-hide="false"
           >
             <ng-container
-              *ngFor="let category of categories$ | async; let i = index"
+              *ngFor="
+                let category of categories$ | async as categories;
+                let i = index
+              "
             >
               <!-- <li class="cs-filter-item">
                 <div class="custom-control custom-checkbox">
@@ -93,12 +96,14 @@
                 <div class="d-flex flex-column">
                   <div class="squaredThree">
                     <input
+                      [name]="category"
                       class="form-check-input"
                       type="radio"
-                      [name]="category"
                       id="category-{{ i }}"
                       (change)="setCategory(category.name)"
+                      [checked]="category.name == categNavbar"
                     />
+                    <!-- [checked]="defaultChecked(categories, i)" -->
                     <label for="category-{{ i }}"></label>
                     <span class="form-check-label label-text">{{
                       category.name
@@ -137,7 +142,7 @@
             aria-expanded="true"
             aria-controls="price"
           >
-            Price
+            Precio
             <span class="accordion-indicator"></span>
           </a>
         </h6>

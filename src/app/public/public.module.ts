@@ -8,17 +8,14 @@ import { SharedModule } from '../shared/shared.module';
 import { NavbarComponent } from './navbar/navbar.component';
 import { HomeComponent } from './home/home.component';
 import { FooterComponent } from './footer/footer.component';
-import { ProductsComponent } from './products/products.component';
-import { ProductComponent } from './products/product/product.component';
 import { CheckoutComponent } from './checkout/checkout.component';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
-import { ToolbarFiltersComponent } from './toolbar-filters/toolbar-filters.component';
-import { SidebarCategoriesComponent } from './sidebar-categories/sidebar-categories.component';
 import { PrivateModule } from '../private/private.module';
-import { RecommendedProductsComponent } from './products/recommended-products/recommended-products.component';
-import { ReviewsComponent } from './products/product/reviews/reviews.component';
 import { CartComponent } from './cart/cart.component';
 import { AddressComponent } from './address/address.component';
+import { PipesModule } from '../core/pipes/pipes.module';
+import { WishListComponent } from './wish-list/wish-list.component';
+import { ProductsModule } from './products/products.module';
 
 @NgModule({
   declarations: [
@@ -26,16 +23,11 @@ import { AddressComponent } from './address/address.component';
     PublicComponent,
     HomeComponent,
     FooterComponent,
-    ProductsComponent,
-    ProductComponent,
     CheckoutComponent,
     BreadcrumbComponent,
-    ToolbarFiltersComponent,
-    SidebarCategoriesComponent,
-    RecommendedProductsComponent,
-    ReviewsComponent,
     CartComponent,
     AddressComponent,
+    WishListComponent,
   ],
   imports: [
     CommonModule,
@@ -45,22 +37,19 @@ import { AddressComponent } from './address/address.component';
     FormsModule,
     SharedModule,
     PrivateModule,
+    PipesModule,
+    ProductsModule,
   ],
   exports: [
     NavbarComponent,
     PublicComponent,
     HomeComponent,
     FooterComponent,
-    ProductsComponent,
-    ProductComponent,
     CheckoutComponent,
     BreadcrumbComponent,
-    ToolbarFiltersComponent,
-    SidebarCategoriesComponent,
-    RecommendedProductsComponent,
-    ReviewsComponent,
     CartComponent,
     AddressComponent,
+    WishListComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
