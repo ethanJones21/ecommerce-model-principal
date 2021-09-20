@@ -23,12 +23,12 @@ export class ProductsService {
   ): Observable<onlyProductsInfoItf> {
     return this.http
       .get<getProductsItf>(
-        `${apiUrl}/products/paginado?term=${term}&page=${page}&limit=${limit}`
+        `${apiUrl}/clients/products/paginado?term=${term}&page=${page}&limit=${limit}`
       )
       .pipe(map(({ ok, products }) => products));
   }
 
   getImg(img: string) {
-    return `${apiUrl}/uploads/products/${img}`;
+    return `${apiUrl}file/products/${img}`;
   }
 }

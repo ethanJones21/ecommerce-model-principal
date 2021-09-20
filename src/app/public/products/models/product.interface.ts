@@ -16,6 +16,7 @@ export interface ProductItf {
   stars: number;
   cover: string;
   price: number;
+  wishlist: boolean;
   description: string;
   content: string;
   stock: number;

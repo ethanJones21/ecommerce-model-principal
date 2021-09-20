@@ -8,6 +8,7 @@ import { CategoriesService } from '../../shared/services/categories.service';
 import { map } from 'rxjs/operators';
 import { MegaMenuService } from 'src/app/shared/services/megamenu.service';
 import { Router } from '@angular/router';
+import { WishListService } from '../../shared/services/wish-list.service';
 @Component({
   selector: 'Navbar',
   templateUrl: './navbar.component.html',
@@ -24,6 +25,7 @@ export class NavbarComponent implements OnInit {
   accesories$!: Observable<any>;
   constructor(
     private cartServ: CartService,
+    private wishListServ: WishListService,
     private categServ: CategoriesService,
     private megamenuServ: MegaMenuService,
     private router: Router
@@ -32,6 +34,7 @@ export class NavbarComponent implements OnInit {
   ngOnInit(): void {
     this.getProductsLength();
     this.socket.on('newCart', this.getProductsLength.bind(this));
+    this.socket.on('newWishList', this.getWishListProductsLength.bind(this));
     this.socket.on('deleteProduct', this.getProductsLength.bind(this));
     this.getCategories();
   }
@@ -47,6 +50,12 @@ export class NavbarComponent implements OnInit {
         .getProductsLength(this.cartServ.cartID)
         .subscribe((count) => (this.countProducts = count));
     }
+  }
+
+  getWishListProductsLength() {
+    this.wishListServ
+      .getWishListProductsLength()
+      .subscribe((count) => (this.countWishProducts = count));
   }
 
   closeModal(close: boolean) {

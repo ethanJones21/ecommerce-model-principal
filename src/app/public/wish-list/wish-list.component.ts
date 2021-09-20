@@ -1,5 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { ImgService } from '../../shared/services/img.service';
+import { WishListService } from '../../shared/services/wish-list.service';
 
 @Component({
   selector: 'Wish-list',
@@ -7,12 +8,11 @@ import { ImgService } from '../../shared/services/img.service';
   styleUrls: ['./wish-list.component.scss'],
 })
 export class WishListComponent implements OnInit {
-  wishlist: any;
+  wishlist: any = { products: [] };
 
   @Output() close = new EventEmitter<boolean>();
   constructor(
-    // private wishListServ: WishListService,
-
+    private wishListServ: WishListService,
     private imgServ: ImgService
   ) {}
 
@@ -21,9 +21,9 @@ export class WishListComponent implements OnInit {
   }
 
   getWishList() {
-    // this.wishListServ.getWishList().subscribe((wishlist) =>
-    //   this.wishlist = wishlist
-    // );
+    this.wishListServ
+      .getWishList()
+      .subscribe((wishlist) => (this.wishlist = wishlist));
   }
 
   closeModal() {

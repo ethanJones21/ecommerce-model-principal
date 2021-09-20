@@ -11,7 +11,9 @@ export class CategoriesService {
   constructor(private http: HttpClient) {}
   getCategories() {
     return this.http
-      .get<{ ok: boolean; categories: any[] }>(`${apiUrl}/configs/categories`)
+      .get<{ ok: boolean; categories: any[] }>(
+        `${apiUrl}/clients/settings/categories`
+      )
       .pipe(map(({ categories }) => categories));
   }
 }

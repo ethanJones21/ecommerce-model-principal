@@ -13,8 +13,9 @@
       </div>
       <div class="card-product-widgets-bottom">
         <a
-          href="#"
-          class="btn-wishlist ml-auto"
+          (click)="addProductToWishList(product)"
+          class="btn-wishlist ml-auto pointer"
+          [ngClass]="{ active: activeWish }"
           data-toggle="tooltip"
           data-placement="left"
           title="Add to wishlist"
@@ -41,15 +42,20 @@
                 custom-control-inline
               "
             >
-              <input
+              <label class="cs-custom-option-label noclick">
+                <input type="radio" class="custom-control-input" />{{
+                  otherV
+                }}</label
+              >
+              <!-- <input
                 type="radio"
                 class="custom-control-input"
                 id="v-{{ i }}"
                 name="otherVarietySelected"
               />
-              <label for="v-{{ i }}" class="cs-custom-option-label">{{
+              <label for="v-{{ i }}" class="cs-custom-option-label noclick">{{
                 otherV
-              }}</label>
+              }}</label> -->
             </div>
           </ng-container>
         </div>
@@ -63,14 +69,15 @@
                   custom-control-inline
                 "
               >
-                <input
+                <!-- <input
                   class="custom-control-input"
                   type="radio"
                   id="color-${{ i }}"
                   data-label="colorOptionText"
                   name="colorSelected"
-                />
-                <label class="cs-custom-option-label" for="color-${{ i }}">
+                /> -->
+                <label class="cs-custom-option-label noclick">
+                  <!-- for="color-${{ i }}" -->
                   <span
                     class="cs-color-swatch"
                     [ngStyle]="{ 'background-color': color }"

@@ -80,6 +80,7 @@ export class ProductComponent implements OnInit, OnDestroy {
       stars: 0,
       cover: '',
       price: 0,
+      wishlist: false,
       description: '',
       content: '',
       stock: 0,
